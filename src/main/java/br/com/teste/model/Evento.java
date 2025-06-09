@@ -2,6 +2,7 @@ package br.com.teste.model;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public class Evento {
 
@@ -12,6 +13,8 @@ public class Evento {
     private LocalTime hora;
     private String descricao;
     private Local local;
+
+    private List<Responsavel> responsavelLista;
 
     public Evento(int id_evento, String nome, String tipo, LocalDate data, LocalTime hora, String descricao, Local local) {
         this.id_evento = id_evento;
@@ -70,5 +73,12 @@ public class Evento {
     }
     public void setId_Local(Local id_Local) {
         this.local = id_Local;
+    }
+
+    public List<Responsavel> getResponsavelLista(){
+        return responsavelLista;
+    }
+    public void setResponsavelLista(List<Responsavel> responsavelLista) {
+        this.responsavelLista = responsavelLista;
     }
 }

@@ -2,26 +2,27 @@ package br.com.teste.service;
 
 import br.com.teste.model.Evento;
 import br.com.teste.model.Local;
+import br.com.teste.model.Responsavel;
 import br.com.teste.dao.EventoDao;
-import java.util.List;
-import java.sql.ResultSet;
 import br.com.teste.dao.LocalDao;
+
+import java.util.List;
 
 public class EventoService {
 
     private EventoDao eventoDao;
     private LocalDao localDao;
 
-    public EventoService(){
+    public EventoService() {
         eventoDao = new EventoDao();
         localDao = new LocalDao();
     }
 
-    public List<Evento> listar(){
+    public List<Evento> listar() {
         return eventoDao.listar();
     }
 
-    public boolean inserir(Evento evento){
+    public boolean inserir(Evento evento) {
         if (!validar(evento)) {
             System.out.println("DEBUG: EventoService.inserir() - Validação inicial falhou.");
             return false;
@@ -42,22 +43,24 @@ public class EventoService {
         if (!inseridoComSucesso) {
             System.out.println("DEBUG: EventoService.inserir() - Falha reportada pelo EventoDao.");
         }
+
+
         return inseridoComSucesso;
     }
 
-    public boolean excluir(Evento evento){
+    public boolean excluir(Evento evento) {
         if (evento.getId_evento() == 0)
             return false;
         return eventoDao.excluir(evento);
     }
 
-    public boolean editar(Evento evento){
+    public boolean editar(Evento evento) {
         if (!validar(evento))
             return false;
         return eventoDao.editar(evento);
     }
 
-    public boolean validar(Evento evento){
+    public boolean validar(Evento evento) {
         if (evento.getNome() == null || evento.getTipo() == null ||
                 evento.getData() == null || evento.getHora() == null ||
                 evento.getDescricao() == null || evento.getId_Local() == null) {
@@ -74,6 +77,15 @@ public class EventoService {
         if (evento.getId_Local().getId_local() == 0) {
             System.out.println("DEBUG: EventoService.validar() - ID do Local é zero.");
             return false;
+        }
+
+        if (evento.getResponsavelLista() != null) {
+            for (Responsavel r : evento.getResponsavelLista()) {
+                if (r.getId_responsavel() == 0) {
+                    System.out.println("DEBUG: EventoService.validar() - Responsável com ID inválido.");
+                    return false;
+                }
+            }
         }
 
         return true;

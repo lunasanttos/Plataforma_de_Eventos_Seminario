@@ -2,6 +2,7 @@ package br.com.teste.dao;
 
 import br.com.teste.model.Evento;
 import br.com.teste.model.Local;
+import br.com.teste.model.Responsavel;
 import br.com.teste.config.Conexao;
 
 import java.sql.PreparedStatement;
@@ -17,13 +18,15 @@ public class EventoDao {
 
     private Conexao conexao;
 
-    public EventoDao(){
+    public EventoDao() {
         this.conexao = Conexao.getInstance();
     }
 
     public List<Evento> listar() {
         List<Evento> eventos = new ArrayList<>();
-        String SQL = "SELECT e.*, l.nome AS local_nome, l.endereco AS local_endereco, l.capacidade AS local_capacidade FROM evento e JOIN local l ON e.id_local = l.id_local";
+        String SQL = "SELECT e.*, l.nome AS local_nome, l.endereco AS local_endereco, l.capacidade AS local_capacidade " +
+                "FROM evento e " +
+                "JOIN local l ON e.id_local = l.id_local";
         try (PreparedStatement ps = conexao.getConn().prepareStatement(SQL);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -42,6 +45,8 @@ public class EventoDao {
                         rs.getString("descricao"),
                         local
                 );
+
+                evento.setResponsavelLista(listarResponsaveisPorEventoId(evento.getId_evento()));
                 eventos.add(evento);
             }
         } catch (SQLException ex) {
@@ -64,8 +69,6 @@ public class EventoDao {
             ps.setInt(6, evento.getId_Local().getId_local());
 
             System.out.println("EventoDao: Executando INSERT SQL: " + SQL);
-            System.out.println("EventoDao: Parâmetros: Nome=" + evento.getNome() + ", Tipo=" + evento.getTipo() + ", Data=" + evento.getData() + ", Hora=" + evento.getHora() + ", Descricao=" + evento.getDescricao() + ", id_local=" + evento.getId_Local().getId_local());
-
             int linhasAfetadas = ps.executeUpdate();
             if (linhasAfetadas > 0) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -75,8 +78,6 @@ public class EventoDao {
                 }
                 sucesso = true;
                 System.out.println("EventoDao: Evento inserido com sucesso!");
-            } else {
-                System.out.println("EventoDao: Nenhuma linha afetada pelo INSERT. Possível falha silenciosa.");
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -132,7 +133,10 @@ public class EventoDao {
 
     public Evento buscarPorId(int id) {
         Evento evento = null;
-        String SQL = "SELECT e.*, l.nome AS local_nome, l.endereco AS local_endereco, l.capacidade AS local_capacidade FROM evento e JOIN local l ON e.id_local = l.id_local WHERE e.id_evento = ?";
+        String SQL = "SELECT e.*, l.nome AS local_nome, l.endereco AS local_endereco, l.capacidade AS local_capacidade " +
+                "FROM evento e " +
+                "JOIN local l ON e.id_local = l.id_local " +
+                "WHERE e.id_evento = ?";
         try (PreparedStatement ps = conexao.getConn().prepareStatement(SQL)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -143,7 +147,6 @@ public class EventoDao {
                             rs.getString("local_endereco"),
                             rs.getInt("local_capacidade")
                     );
-                    // Correção: Remova 'Evento' aqui, pois 'evento' já foi declarado no escopo do método.
                     evento = new Evento(
                             rs.getInt("id_evento"),
                             rs.getString("nome"),
@@ -153,6 +156,7 @@ public class EventoDao {
                             rs.getString("descricao"),
                             local
                     );
+                    evento.setResponsavelLista(listarResponsaveisPorEventoId(evento.getId_evento()));
                 }
             }
         } catch (SQLException ex) {
@@ -160,5 +164,29 @@ public class EventoDao {
             System.out.println("Erro ao buscar evento por ID: " + ex.getMessage());
         }
         return evento;
+    }
+
+    private List<Responsavel> listarResponsaveisPorEventoId(int idEvento) {
+        List<Responsavel> responsaveis = new ArrayList<>();
+        String SQL = "SELECT r.* FROM responsavel r " +
+                "JOIN evento_responsavel er ON r.id_responsavel = er.id_responsavel " +
+                "WHERE er.id_evento = ?";
+        try (PreparedStatement ps = conexao.getConn().prepareStatement(SQL)) {
+            ps.setInt(1, idEvento);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Responsavel r = new Responsavel();
+                    r.setId_responsavel(rs.getInt("id_responsavel"));
+                    r.setNome(rs.getString("nome"));
+                    r.setEmail(rs.getString("email"));
+                    // Adicione outros campos conforme necessário
+                    responsaveis.add(r);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.out.println("Erro ao buscar responsáveis do evento ID " + idEvento + ": " + ex.getMessage());
+        }
+        return responsaveis;
     }
 }
