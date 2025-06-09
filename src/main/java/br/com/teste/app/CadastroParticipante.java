@@ -1,13 +1,14 @@
 package br.com.teste.app;
 
-import java.util.Scanner;                // Import Scanner
-import br.com.teste.model.Participante; // Ajuste para seu pacote
+import java.util.Scanner;
+import br.com.teste.model.Participante;
 import br.com.teste.service.ParticipanteService;
 
 public class CadastroParticipante {
 
+    private static Scanner scanner = MenuInicial.getScanner();
+
     public static void executarCadastroParticipante() {
-        Scanner scanner = new Scanner(System.in);
         ParticipanteService service = new ParticipanteService();
 
         System.out.println("Cadastro de Participante ");
@@ -37,11 +38,12 @@ public class CadastroParticipante {
             System.out.println("Email: " + novoParticipante.getEmail());
             System.out.println("CPF: " + novoParticipante.getCpf());
             System.out.println("ID (informado, não o gerado pelo BD): " + novoParticipante.getId_participante());
+
+            System.out.println("\nPor favor, faça login com seus dados de participante.");
+            new LoginParticipante().iniciarLogin();
         } else {
             System.out.println("\nFalha ao cadastrar participante. Verifique os dados.");
         }
-
-        // Não feche o scanner se for usado em outros lugares
     }
 
     public static void main(String[] args) {

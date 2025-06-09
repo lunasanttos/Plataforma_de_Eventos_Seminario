@@ -1,51 +1,107 @@
 package br.com.teste.app;
 
+import br.com.teste.config.Conexao;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class MenuInicial {
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+    private static Scanner scanner = new Scanner(System.in);
 
+    public static void main(String[] args) {
         System.out.println("Bem-vindo ao Sistema de Eventos!");
 
-        try {
-            System.out.print("O que você quer fazer: (1) Cadastrar-se ou (2) Login de Participante ou (3) Login de Responsável ? ");
-            int opcao = sc.nextInt();
-            sc.nextLine(); // consome o Enter
+        boolean sairDoSistema = false;
+        while (!sairDoSistema) {
+            try {
+                System.out.println("\n--- Menu Principal ---");
+                System.out.println("O que você quer fazer: (1) Cadastrar-se ou (2) Login de Participante ou (3) Login de Responsável ou (0) Sair? ");
+                System.out.print("Sua opção: ");
 
-            if (opcao == 1) {
-                System.out.print("Cadastrar-se como: (1) Participante ou (2) Responsável ou (3) Sair ? ");
-                int tipo = sc.nextInt();
-                sc.nextLine(); // consome o Enter
+                int opcaoPrincipal = scanner.nextInt();
+                scanner.nextLine();
 
-                switch (tipo) {
+                switch (opcaoPrincipal) {
+                    case 1:
+                        exibirMenuCadastro();
+                        break;
+                    case 2:
+                        handleLoginParticipante();
+                        break;
+                    case 3:
+                        handleLoginResponsavel();
+                        break;
+                    case 0:
+                        System.out.println("Saindo do Sistema. Até logo!");
+                        sairDoSistema = true;
+                        break;
+                    default:
+                        System.out.println("Opção inválida. Por favor, tente novamente.");
+                }
+
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida. Por favor, digite um número.");
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        scanner.close();
+      //  Conexao.getInstance().closeConnection();
+    }
+
+    private static void exibirMenuCadastro() {
+        boolean voltarAoMenuPrincipal = false;
+        while (!voltarAoMenuPrincipal) {
+            try {
+                System.out.println("\n--- Menu de Cadastro ---");
+                System.out.println("1. Cadastrar Participante");
+                System.out.println("2. Cadastrar Responsável");
+                System.out.println("0. Voltar ao Menu Principal");
+                System.out.print("Sua opção: ");
+
+                int tipoCadastro = scanner.nextInt();
+                scanner.nextLine();
+
+                switch (tipoCadastro) {
                     case 1:
                         CadastroParticipante.executarCadastroParticipante();
+                        voltarAoMenuPrincipal = true;
                         break;
                     case 2:
                         CadastroResponsavel.executarCadastroResponsavel();
+                        voltarAoMenuPrincipal = true;
                         break;
-                    case 3:
-                        System.out.println("Saindo...");
+                    case 0:
+                        System.out.println("Voltando ao Menu Principal...");
+                        voltarAoMenuPrincipal = true;
                         break;
                     default:
-                        System.out.println("Opção inválida.");
+                        System.out.println("Opção inválida. Por favor, tente novamente.");
                 }
-            } else if (opcao == 2) {
-                new LoginParticipante().iniciarLogin();
-            } else if (opcao == 3) {
-                new LoginResponsavel().iniciarLogin(); // Novo: classe específica para login do responsável
-            } else {
-                System.out.println("Opção inválida.");
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida. Por favor, digite um número.");
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("Ocorreu um erro inesperado durante o cadastro: " + e.getMessage());
+                e.printStackTrace();
             }
-
-        } catch (Exception e) {
-            System.out.println("Entrada inválida. Tente novamente.");
-            sc.nextLine(); // limpa o buffer
         }
+    }
 
-        // Não feche o Scanner ligado a System.in
-        // sc.close();
+    private static void handleLoginParticipante() {
+        LoginParticipante loginParticipante = new LoginParticipante();
+        loginParticipante.iniciarLogin();
+    }
+
+    private static void handleLoginResponsavel() {
+        LoginResponsavel loginResponsavel = new LoginResponsavel();
+        loginResponsavel.iniciarLogin();
+    }
+
+    public static Scanner getScanner() {
+        return scanner;
     }
 }

@@ -2,8 +2,7 @@ package br.com.teste.service;
 import br.com.teste.dao.LocalDao;
 import br.com.teste.model.Local;
 
-import java.sql.ResultSet;
-
+import java.util.List; // Adicionado: Import para List
 
 public class LocalService {
 
@@ -13,7 +12,7 @@ public class LocalService {
         localDao = new LocalDao();
     }
 
-    public ResultSet listar(){
+    public List<Local> listar(){ // Alterado de ResultSet para List<Local>
         return  localDao.listar();
     }
 
@@ -22,8 +21,7 @@ public class LocalService {
         if (!validar(local))
             return false;
 
-        localDao.inserir(local);
-        return true;
+        return localDao.inserir(local);
     }
 
     public boolean excluir(Local local){
@@ -32,8 +30,7 @@ public class LocalService {
         if (local.getId_local() == 0)
             return false;
 
-        localDao.excluir(local);
-        return true;
+        return localDao.excluir(local);
     }
 
     public boolean editar(Local local){
@@ -41,8 +38,7 @@ public class LocalService {
         if (!validar(local))
             return false;
 
-        localDao.editar(local);
-        return true;
+        return localDao.editar(local);
     }
     public boolean validar(Local local){
 

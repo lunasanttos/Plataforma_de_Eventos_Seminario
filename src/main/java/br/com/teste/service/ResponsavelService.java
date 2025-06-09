@@ -3,7 +3,7 @@ package br.com.teste.service;
 import br.com.teste.dao.ResponsavelDao;
 import br.com.teste.model.Responsavel;
 
-import java.sql.ResultSet;
+import java.util.List; // Adicionado: Import para List
 
 public class ResponsavelService {
     private ResponsavelDao responsavelDao;
@@ -12,29 +12,26 @@ public class ResponsavelService {
         responsavelDao = new ResponsavelDao();
     }
 
-    public ResultSet listar() {
+    public List<Responsavel> listar() { // Alterado de ResultSet para List<Responsavel>
         return responsavelDao.listar();
     }
 
     public boolean inserir(Responsavel responsavel) {
         if (!validar(responsavel))
             return false;
-        responsavelDao.inserir(responsavel);
-        return true;
+        return responsavelDao.inserir(responsavel);
     }
 
     public boolean excluir(Responsavel responsavel) {
         if (responsavel.getId_responsavel() == 0)
             return false;
-        responsavelDao.excluir(responsavel);
-        return true;
+        return responsavelDao.excluir(responsavel);
     }
 
     public boolean editar(Responsavel responsavel) {
         if (!validar(responsavel))
             return false;
-        responsavelDao.editar(responsavel);
-        return true;
+        return responsavelDao.editar(responsavel);
     }
 
     public boolean validar(Responsavel responsavel) {

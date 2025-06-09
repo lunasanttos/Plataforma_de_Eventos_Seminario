@@ -3,9 +3,7 @@ package br.com.teste.service;
 import br.com.teste.model.Participante;
 import br.com.teste.dao.ParticipanteDao;
 
-
-import java.sql.ResultSet;
-
+import java.util.List; // Adicionado: Import para List
 
 public class ParticipanteService {
 
@@ -13,7 +11,6 @@ public class ParticipanteService {
 
     public ParticipanteService(){
         participanteDao = new ParticipanteDao();
-
     }
 
     public Participante validarLogin(String nome, String email, String cpf) {
@@ -26,10 +23,7 @@ public class ParticipanteService {
         return participanteDao.buscarPorLogin(nome, email, cpf);
     }
 
-
-
-
-    public ResultSet listar(){
+    public List<Participante> listar(){ // Alterado de ResultSet para List<Participante>
         return  participanteDao.listar();
     }
 
@@ -38,18 +32,15 @@ public class ParticipanteService {
         if (!validar(participante))
             return false;
 
-        participanteDao.inserir(participante);
-        return true;
+        return participanteDao.inserir(participante);
     }
 
     public boolean excluir(Participante participante){
 
-
         if (participante.getId_participante() == 0)
             return false;
 
-        participanteDao.excluir(participante);
-        return true;
+        return participanteDao.excluir(participante);
     }
 
     public boolean editar(Participante participante){
@@ -57,8 +48,7 @@ public class ParticipanteService {
         if (!validar(participante))
             return false;
 
-        participanteDao.editar(participante);
-        return true;
+        return participanteDao.editar(participante);
     }
     public boolean validar(Participante participante){
 
@@ -70,5 +60,4 @@ public class ParticipanteService {
 
         return true;
     }
-
 }

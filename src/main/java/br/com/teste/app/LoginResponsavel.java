@@ -3,33 +3,38 @@ package br.com.teste.app;
 import br.com.teste.model.Responsavel;
 import br.com.teste.service.ResponsavelService;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class LoginResponsavel {
 
+    private static Scanner sc = MenuInicial.getScanner();
+
     public void iniciarLogin() {
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Informe seu nome: ");
-        String nome = sc.nextLine();
+        boolean loginBemSucedido = false;
+        while (!loginBemSucedido) {
+            System.out.print("Informe seu nome: ");
+            String nome = sc.nextLine();
 
-        System.out.print("Informe seu email: ");
-        String email = sc.nextLine();
+            System.out.print("Informe seu email: ");
+            String email = sc.nextLine();
 
-        ResponsavelService responsavelService = new ResponsavelService();
-        Responsavel responsavel = responsavelService.validarLogin(nome, email);
+            ResponsavelService responsavelService = new ResponsavelService();
+            Responsavel responsavel = responsavelService.validarLogin(nome, email);
 
-        if (responsavel != null) {
-            System.out.println("Login realizado com sucesso!");
-            menuResponsavel(responsavel);
-        } else {
-            System.out.println("Credenciais inválidas.");
+            if (responsavel != null) {
+                System.out.println("Login de Responsável realizado com sucesso!");
+                // Corrigido para chamar o novo MenuResponsavel e passar o responsável
+                new MenuResponsavel(sc).exibirMenuResponsavel(responsavel);
+                loginBemSucedido = true;
+            } else {
+                System.out.println("Credenciais inválidas. Por favor, tente novamente.");
+                System.out.print("Deseja tentar novamente? (S/N): ");
+                String tentarNovamente = sc.nextLine();
+                if (!tentarNovamente.equalsIgnoreCase("S")) {
+                    loginBemSucedido = true;
+                }
+            }
         }
-
-        // Não feche o Scanner que usa System.in
-    }
-
-    private void menuResponsavel(Responsavel responsavel) {
-        System.out.println("Menu do Responsável: " + responsavel.getNome());
-        // Adicionar funcionalidades específicas do Responsável aqui
     }
 }

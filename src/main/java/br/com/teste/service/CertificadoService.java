@@ -1,11 +1,8 @@
 package br.com.teste.service;
 import br.com.teste.model.Certificado;
 import br.com.teste.dao.CertificadoDao;
-import br.com.teste.dao.ParticipanteDao;
 
-
-import java.sql.ResultSet;
-
+import java.util.List; // Adicionado: Import para List
 
 public class CertificadoService {
 
@@ -15,7 +12,7 @@ public class CertificadoService {
         certificadoDao = new CertificadoDao();
     }
 
-    public ResultSet listar(){
+    public List<Certificado> listar(){ // Alterado de ResultSet para List<Certificado>
         return  certificadoDao.listar();
     }
 
@@ -23,24 +20,21 @@ public class CertificadoService {
         if (!validar(certificado))
             return false;
 
-        certificadoDao.inserir(certificado);
-        return true;
+        return certificadoDao.inserir(certificado);
     }
 
     public boolean excluir(Certificado certificado){
-        if (certificado.getId_Certificado() == 0)
+        if (certificado.getId_Certificado() == 0) // Cuidado com a capitalização aqui, como já mencionei.
             return false;
 
-        certificadoDao.excluir(certificado);
-        return true;
+        return certificadoDao.excluir(certificado);
     }
 
     public boolean editar(Certificado certificado){
         if (!validar(certificado))
             return false;
 
-        certificadoDao.editar(certificado);
-        return true;
+        return certificadoDao.editar(certificado);
     }
 
     public boolean validar(Certificado certificado) {

@@ -5,68 +5,72 @@ import br.com.teste.model.Responsavel;
 import br.com.teste.service.ParticipanteService;
 import br.com.teste.service.ResponsavelService;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class LoginParticipante {
 
+    private static Scanner sc = MenuInicial.getScanner();
+
     public void iniciarLogin() {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Bem-vindo ao Sistema de Eventos!");
-        System.out.print("Você é (1) Participante ou (2) Responsável? ");
-        int opcao = sc.nextInt();
-        sc.nextLine(); // consumir quebra de linha
-
-        if (opcao == 1) {
-            System.out.print("Informe seu nome: ");
-            String nome = sc.nextLine();
-
-            System.out.print("Informe seu email: ");
-            String email = sc.nextLine();
-
-            System.out.print("Informe seu CPF: ");
-            String cpf = sc.nextLine();
-
-            ParticipanteService participanteService = new ParticipanteService();
-            Participante participante = participanteService.validarLogin(nome, email, cpf);
-
-            if (participante != null) {
-                System.out.println("Login realizado com sucesso!");
-                menuParticipante(participante);
-            } else {
-                System.out.println("Credenciais inválidas.");
+        boolean loginBemSucedido = false;
+        while (!loginBemSucedido) {
+            System.out.println("Bem-vindo ao Sistema de Eventos!");
+            System.out.print("Você é (1) Participante ou (2) Responsável ou (0) Voltar ao Menu Principal? ");
+            int opcao = -1;
+            try {
+                opcao = sc.nextInt();
+                sc.nextLine();
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida. Por favor, digite um número.");
+                sc.nextLine();
+                continue;
             }
 
-        } else if (opcao == 2) {
-            System.out.print("Informe seu nome: ");
-            String nome = sc.nextLine();
+            if (opcao == 1) {
+                System.out.print("Informe seu nome: ");
+                String nome = sc.nextLine();
 
-            System.out.print("Informe seu email: ");
-            String email = sc.nextLine();
+                System.out.print("Informe seu email: ");
+                String email = sc.nextLine();
 
-            ResponsavelService responsavelService = new ResponsavelService();
-            Responsavel responsavel = responsavelService.validarLogin(nome, email);
+                System.out.print("Informe seu CPF: ");
+                String cpf = sc.nextLine();
 
-            if (responsavel != null) {
-                System.out.println("Login realizado com sucesso!");
-                menuResponsavel(responsavel);
+                ParticipanteService participanteService = new ParticipanteService();
+                Participante participante = participanteService.validarLogin(nome, email, cpf);
+
+                if (participante != null) {
+                    System.out.println("Login de Participante realizado com sucesso!");
+                    new MenuParticipante(sc).exibirMenuParticipante();
+                    loginBemSucedido = true;
+                } else {
+                    System.out.println("Credenciais de Participante inválidas. Por favor, tente novamente.");
+                }
+
+            } else if (opcao == 2) {
+                System.out.print("Informe seu nome (Responsável): ");
+                String nome = sc.nextLine();
+
+                System.out.print("Informe seu email (Responsável): ");
+                String email = sc.nextLine();
+
+                ResponsavelService responsavelService = new ResponsavelService();
+                Responsavel responsavel = responsavelService.validarLogin(nome, email);
+
+                if (responsavel != null) {
+                    System.out.println("Login de Responsável realizado com sucesso!");
+                    new MenuResponsavel(sc).exibirMenuResponsavel(responsavel);
+                    loginBemSucedido = true;
+                } else {
+                    System.out.println("Credenciais de Responsável inválidas. Por favor, tente novamente.");
+                }
+            } else if (opcao == 0) {
+                System.out.println("Voltando ao Menu Principal...");
+                loginBemSucedido = true;
             } else {
-                System.out.println("Credenciais inválidas.");
+                System.out.println("Opção inválida.");
             }
-
-        } else {
-            System.out.println("Opção inválida.");
         }
-
-        sc.close();
-    }
-
-    private void menuParticipante(Participante participante) {
-        System.out.println("Menu do Participante: " + participante.getNome());
-        // implementar menu real aqui
-    }
-
-    private void menuResponsavel(Responsavel responsavel) {
-        System.out.println("Menu do Responsável: " + responsavel.getNome());
-        // implementar menu real aqui
     }
 }
