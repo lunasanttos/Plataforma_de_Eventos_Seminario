@@ -2,7 +2,8 @@ package br.com.teste.model;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List; // Importar se a lista de responsáveis for usada
+import java.util.List; // Importar List para o atributo responsavelLista
+import br.com.teste.model.Responsavel; // Adicione esta importação para a classe Responsavel
 
 public class Evento {
 
@@ -12,9 +13,9 @@ public class Evento {
     private LocalDate data;
     private LocalTime hora;
     private String descricao;
-    private Local local; // Atributo chamado 'local'
+    private Local local;
 
-    // Opcional: private List<Responsavel> responsavelLista; // Manter se for usar
+    private List<Responsavel> responsavelLista; // ATRIBUTO AGORA ATIVO
 
     public Evento(int id_evento, String nome, String tipo, LocalDate data, LocalTime hora, String descricao, Local local) {
         this.id_evento = id_evento;
@@ -68,29 +69,28 @@ public class Evento {
         this.descricao = descricao;
     }
 
-    // RENOMEADO: Agora retorna o objeto Local e tem um nome intuitivo
     public Local getLocal() {
         return local;
     }
-    // RENOMEADO: Setter também renomeado para consistência
     public void setLocal(Local local) {
         this.local = local;
     }
 
-    // Se estiver usando a lista de responsáveis, mantenha estes métodos
-    /*
+    // MÉTODOS GETTER E SETTER DA LISTA DE RESPONSÁVEIS ATIVADOS
     public List<Responsavel> getResponsavelLista(){
         return responsavelLista;
     }
     public void setResponsavelLista(List<Responsavel> responsavelLista) {
         this.responsavelLista = responsavelLista;
     }
-    */
 
     @Override
     public String toString() {
+        String localNome = (local != null ? local.getNome() : "N/A");
+        // Se você quiser incluir os responsáveis no toString, adicione uma lógica aqui
+        // Ex: ", Responsáveis=" + (responsavelLista != null ? responsavelLista.size() : "0")
         return "Evento [ID=" + id_evento + ", Nome=" + nome + ", Tipo=" + tipo +
                 ", Data=" + data + ", Hora=" + hora + ", Descricao=" + descricao +
-                ", Local=" + (local != null ? local.getNome() : "N/A") + "]";
+                ", Local=" + localNome + "]";
     }
 }

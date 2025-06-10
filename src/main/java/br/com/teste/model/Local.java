@@ -13,8 +13,10 @@ public class Local {
         this.capacidade = capacidade;
     }
 
-    public int getId_local() { return id_local; }
-    public String getNome() { return nome; }
+    public int getId_local() {
+        return id_local; }
+    public String getNome() {
+        return nome; }
     public String getEndereco() { return endereco; }
     public int getCapacidade() { return capacidade; }
 
