@@ -33,10 +33,10 @@ public class CadastroResponsavel {
             System.out.println("Detalhes:");
             System.out.println("Nome: " + novoResponsavel.getNome());
             System.out.println("Email: " + novoResponsavel.getEmail());
-            System.out.println("ID (informado, não o gerado pelo BD): " + novoResponsavel.getId_responsavel());
+            System.out.println("ID : " + novoResponsavel.getId_responsavel());
 
             System.out.println("\nPor favor, faça login com seus dados de responsável.");
-            new LoginResponsavel().iniciarLogin();
+            new LoginResponsavel().iniciarLoginResponsavel();
 
         } else {
             System.out.println("\nFalha ao cadastrar responsável. Verifique os dados.");

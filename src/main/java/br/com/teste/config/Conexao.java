@@ -12,7 +12,7 @@ public class Conexao {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/plataforma_de_eventos", "root", "luna2550");
+                    "jdbc:mysql://localhost:3306/plataforma_de_eventos_db", "daniely_user", "921526");
             System.out.println("Conexão criada com sucesso!");
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("Falha na conexão");

@@ -2,7 +2,7 @@ package br.com.teste.model;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
+import java.util.List; // Importar se a lista de responsáveis for usada
 
 public class Evento {
 
@@ -12,9 +12,9 @@ public class Evento {
     private LocalDate data;
     private LocalTime hora;
     private String descricao;
-    private Local local;
+    private Local local; // Atributo chamado 'local'
 
-    private List<Responsavel> responsavelLista;
+    // Opcional: private List<Responsavel> responsavelLista; // Manter se for usar
 
     public Evento(int id_evento, String nome, String tipo, LocalDate data, LocalTime hora, String descricao, Local local) {
         this.id_evento = id_evento;
@@ -68,17 +68,29 @@ public class Evento {
         this.descricao = descricao;
     }
 
-    public Local getId_Local() {
+    // RENOMEADO: Agora retorna o objeto Local e tem um nome intuitivo
+    public Local getLocal() {
         return local;
     }
-    public void setId_Local(Local id_Local) {
-        this.local = id_Local;
+    // RENOMEADO: Setter também renomeado para consistência
+    public void setLocal(Local local) {
+        this.local = local;
     }
 
+    // Se estiver usando a lista de responsáveis, mantenha estes métodos
+    /*
     public List<Responsavel> getResponsavelLista(){
         return responsavelLista;
     }
     public void setResponsavelLista(List<Responsavel> responsavelLista) {
         this.responsavelLista = responsavelLista;
+    }
+    */
+
+    @Override
+    public String toString() {
+        return "Evento [ID=" + id_evento + ", Nome=" + nome + ", Tipo=" + tipo +
+                ", Data=" + data + ", Hora=" + hora + ", Descricao=" + descricao +
+                ", Local=" + (local != null ? local.getNome() : "N/A") + "]";
     }
 }

@@ -1,93 +1,120 @@
 package br.com.teste.service;
 
 import br.com.teste.model.Evento;
-import br.com.teste.model.Local;
-import br.com.teste.model.Responsavel;
 import br.com.teste.dao.EventoDao;
-import br.com.teste.dao.LocalDao;
-
+import br.com.teste.model.Local;
+import java.time.LocalDate;
 import java.util.List;
 
 public class EventoService {
 
     private EventoDao eventoDao;
-    private LocalDao localDao;
 
     public EventoService() {
-        eventoDao = new EventoDao();
-        localDao = new LocalDao();
+        this.eventoDao = new EventoDao();
     }
 
-    public List<Evento> listar() {
-        return eventoDao.listar();
+    // Read: Busca um evento por ID
+    public Evento buscarPorId(int idEvento) {
+        if (idEvento <= 0) {
+            System.out.println("Erro no EventoService: ID de evento inválido para busca.");
+            return null;
+        }
+        return eventoDao.buscarPorId(idEvento);
     }
 
+    // Read: Lista eventos que estão disponíveis (ex: futuros)
+    public List<Evento> listarEventosDisponiveis() {
+        return eventoDao.listarEventosDisponiveis();
+    }
+
+    // Read: Lista TODOS os eventos (independentemente da data)
+    // Este método é usado pelo MenuResponsavel para exibir eventos para edição/exclusão
+    public List<Evento> listarTodosEventos() {
+        return eventoDao.listarTodos();
+    }
+
+    // Create: Insere um novo evento
     public boolean inserir(Evento evento) {
         if (!validar(evento)) {
-            System.out.println("DEBUG: EventoService.inserir() - Validação inicial falhou.");
+            System.out.println("EventoService: Validação falhou. Evento não será inserido.");
             return false;
         }
-
-        if (evento.getId_Local() != null && evento.getId_Local().getId_local() != 0) {
-            Local localExistente = localDao.buscarPorId(evento.getId_Local().getId_local());
-            if (localExistente == null) {
-                System.out.println("DEBUG: EventoService.inserir() - O ID do local informado não existe no banco de dados.");
-                return false;
-            }
-        } else {
-            System.out.println("DEBUG: EventoService.inserir() - ID do local nulo ou zero.");
-            return false;
-        }
-
-        boolean inseridoComSucesso = eventoDao.inserir(evento);
-        if (!inseridoComSucesso) {
-            System.out.println("DEBUG: EventoService.inserir() - Falha reportada pelo EventoDao.");
-        }
-
-
-        return inseridoComSucesso;
+        return eventoDao.inserir(evento);
     }
 
-    public boolean excluir(Evento evento) {
-        if (evento.getId_evento() == 0)
-            return false;
-        return eventoDao.excluir(evento);
-    }
-
+    // Update: Edita um evento existente
+    // Este método é usado pelo MenuResponsavel para editar um evento
     public boolean editar(Evento evento) {
-        if (!validar(evento))
+        if (evento.getId_evento() <= 0) {
+            System.out.println("Erro no EventoService: ID do evento inválido para edição.");
             return false;
+        }
+        if (!validar(evento)) {
+            System.out.println("EventoService: Validação falhou. Evento não será editado.");
+            return false;
+        }
         return eventoDao.editar(evento);
     }
 
-    public boolean validar(Evento evento) {
-        if (evento.getNome() == null || evento.getTipo() == null ||
-                evento.getData() == null || evento.getHora() == null ||
-                evento.getDescricao() == null || evento.getId_Local() == null) {
-            System.out.println("DEBUG: EventoService.validar() - Campos nulos/vazios detectados (etapa 1).");
+    // Delete: Exclui um evento
+    // Este método é usado pelo MenuResponsavel para excluir um evento
+    public boolean excluir(int idEvento) {
+        if (idEvento <= 0) {
+            System.out.println("Erro no EventoService: ID do evento inválido para exclusão.");
             return false;
         }
-
-        if (evento.getNome().isEmpty() || evento.getTipo().isEmpty() ||
-                evento.getDescricao().isEmpty()) {
-            System.out.println("DEBUG: EventoService.validar() - Campos vazios detectados (etapa 2).");
+        // Regra de negócio: Você pode adicionar lógica aqui para verificar
+        // se existem inscrições ativas para este evento antes de excluir.
+        // Se houver, você precisaria de um InscricaoService aqui para verificar.
+        /*
+        // Exemplo de verificação de dependência (descomente e implemente se necessário)
+        InscricaoService inscricaoService = new InscricaoService(); // Cuidado com a criação dentro do método, pode ser melhor injetar
+        List<Inscricao> inscricoesDoEvento = inscricaoService.listarInscricoesPorEvento(idEvento); // Precisaria desse método no InscricaoService
+        if (inscricoesDoEvento != null && !inscricoesDoEvento.isEmpty()) {
+            System.out.println("Erro no EventoService: Não é possível excluir evento com inscrições ativas.");
             return false;
         }
+        */
+        return eventoDao.excluir(idEvento);
+    }
 
-        if (evento.getId_Local().getId_local() == 0) {
-            System.out.println("DEBUG: EventoService.validar() - ID do Local é zero.");
+    // Método de validação para um objeto Evento
+    private boolean validar(Evento evento) {
+        if (evento == null) {
+            System.out.println("Erro de validação: Evento é nulo.");
             return false;
         }
-
-        if (evento.getResponsavelLista() != null) {
-            for (Responsavel r : evento.getResponsavelLista()) {
-                if (r.getId_responsavel() == 0) {
-                    System.out.println("DEBUG: EventoService.validar() - Responsável com ID inválido.");
-                    return false;
-                }
-            }
+        if (evento.getNome() == null || evento.getNome().isEmpty()) {
+            System.out.println("Erro de validação: Nome do evento é obrigatório.");
+            return false;
         }
-
+        if (evento.getTipo() == null || evento.getTipo().isEmpty()) {
+            System.out.println("Erro de validação: Tipo do evento é obrigatório.");
+            return false;
+        }
+        if (evento.getData() == null) {
+            System.out.println("Erro de validação: Data do evento é obrigatória.");
+            return false;
+        }
+        // Para edição, talvez você queira permitir datas passadas se o evento já ocorreu.
+        // Para novos eventos, essa validação é geralmente boa.
+        if (evento.getData().isBefore(LocalDate.now()) && evento.getId_evento() == 0) { // Se for novo evento e data passada
+            System.out.println("Erro de validação: Data de novo evento não pode ser no passado.");
+            return false;
+        }
+        if (evento.getHora() == null) {
+            System.out.println("Erro de validação: Hora do evento é obrigatória.");
+            return false;
+        }
+        if (evento.getDescricao() == null || evento.getDescricao().isEmpty()) {
+            System.out.println("Erro de validação: Descrição do evento é obrigatória.");
+            return false;
+        }
+        if (evento.getLocal() == null || evento.getLocal().getId_local() <= 0) {
+            System.out.println("Erro de validação: Local do evento inválido ou não selecionado.");
+            return false;
+        }
         return true;
     }
 }

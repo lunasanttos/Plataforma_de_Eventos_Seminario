@@ -5,6 +5,9 @@ import br.com.teste.model.Participante;
 import br.com.teste.service.ParticipanteService;
 
 public class CadastroParticipante {
+    public static void main(String[] args) {
+        executarCadastroParticipante();
+    }
 
     private static Scanner scanner = MenuInicial.getScanner();
 
@@ -37,16 +40,14 @@ public class CadastroParticipante {
             System.out.println("Nome: " + novoParticipante.getNome());
             System.out.println("Email: " + novoParticipante.getEmail());
             System.out.println("CPF: " + novoParticipante.getCpf());
-            System.out.println("ID (informado, não o gerado pelo BD): " + novoParticipante.getId_participante());
+            System.out.println("ID : " + novoParticipante.getId_participante());
 
             System.out.println("\nPor favor, faça login com seus dados de participante.");
-            new LoginParticipante().iniciarLogin();
+            new LoginParticipante().iniciarLoginParticipante();
         } else {
             System.out.println("\nFalha ao cadastrar participante. Verifique os dados.");
         }
     }
 
-    public static void main(String[] args) {
-        executarCadastroParticipante();
-    }
+
 }

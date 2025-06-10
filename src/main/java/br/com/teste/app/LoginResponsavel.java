@@ -3,36 +3,38 @@ package br.com.teste.app;
 import br.com.teste.model.Responsavel;
 import br.com.teste.service.ResponsavelService;
 
-import java.util.InputMismatchException;
+import java.util.InputMismatchException; // Pode ser removido se não houver nextInt() direto aqui
 import java.util.Scanner;
 
 public class LoginResponsavel {
 
-    private static Scanner sc = MenuInicial.getScanner();
+    private static Scanner scanner = MenuInicial.getScanner(); // Padronizado para 'scanner'
 
-    public void iniciarLogin() {
+    // O nome do método foi alterado para refletir que ele é específico para responsável
+    public void iniciarLoginResponsavel() {
         boolean loginBemSucedido = false;
         while (!loginBemSucedido) {
+            System.out.println("\n--- Login de Responsável ---");
             System.out.print("Informe seu nome: ");
-            String nome = sc.nextLine();
+            String nome = scanner.nextLine();
 
             System.out.print("Informe seu email: ");
-            String email = sc.nextLine();
+            String email = scanner.nextLine();
 
             ResponsavelService responsavelService = new ResponsavelService();
             Responsavel responsavel = responsavelService.validarLogin(nome, email);
 
             if (responsavel != null) {
                 System.out.println("Login de Responsável realizado com sucesso!");
-                // Corrigido para chamar o novo MenuResponsavel e passar o responsável
-                new MenuResponsavel(sc).exibirMenuResponsavel(responsavel);
-                loginBemSucedido = true;
+                // O MenuResponsavel agora recebe o Responsavel logado diretamente
+                new MenuResponsavel(scanner, responsavel).exibirMenuResponsavel();
+                loginBemSucedido = true; // Sai do loop após login bem-sucedido
             } else {
-                System.out.println("Credenciais inválidas. Por favor, tente novamente.");
+                System.out.println("Credenciais de Responsável inválidas. Por favor, tente novamente.");
                 System.out.print("Deseja tentar novamente? (S/N): ");
-                String tentarNovamente = sc.nextLine();
+                String tentarNovamente = scanner.nextLine();
                 if (!tentarNovamente.equalsIgnoreCase("S")) {
-                    loginBemSucedido = true;
+                    loginBemSucedido = true; // Sai do loop se o usuário não quiser tentar novamente
                 }
             }
         }

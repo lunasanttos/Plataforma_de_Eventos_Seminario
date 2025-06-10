@@ -2,73 +2,121 @@ package br.com.teste.dao;
 
 import br.com.teste.model.Evento;
 import br.com.teste.model.Local;
-import br.com.teste.model.Responsavel;
 import br.com.teste.config.Conexao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EventoDao {
 
-    private Conexao conexao;
+    private Connection conexao;
 
     public EventoDao() {
-        this.conexao = Conexao.getInstance();
+        this.conexao = Conexao.getInstance().getConn();
     }
 
-    public List<Evento> listar() {
-        List<Evento> eventos = new ArrayList<>();
-        String SQL = "SELECT e.*, l.nome AS local_nome, l.endereco AS local_endereco, l.capacidade AS local_capacidade " +
-                "FROM evento e " +
-                "JOIN local l ON e.id_local = l.id_local";
-        try (PreparedStatement ps = conexao.getConn().prepareStatement(SQL);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Local local = new Local(
-                        rs.getInt("id_local"),
-                        rs.getString("local_nome"),
-                        rs.getString("local_endereco"),
-                        rs.getInt("local_capacidade")
-                );
-                Evento evento = new Evento(
-                        rs.getInt("id_evento"),
-                        rs.getString("nome"),
-                        rs.getString("tipo"),
-                        rs.getDate("data").toLocalDate(),
-                        rs.getTime("hora").toLocalTime(),
-                        rs.getString("descricao"),
-                        local
-                );
+    private Evento criarEventoDoResultSet(ResultSet rs) throws SQLException {
+        Local localDoEvento = new Local(
+                rs.getInt("id_local"),
+                rs.getString("local_nome"),
+                rs.getString("local_endereco"),
+                rs.getInt("local_capacidade")
+        );
 
-                evento.setResponsavelLista(listarResponsaveisPorEventoId(evento.getId_evento()));
-                eventos.add(evento);
+        return new Evento(
+                rs.getInt("id_evento"),
+                rs.getString("nome"),
+                rs.getString("tipo"),
+                rs.getDate("data").toLocalDate(),
+                rs.getTime("hora").toLocalTime(),
+                rs.getString("descricao"),
+                localDoEvento
+        );
+    }
+
+    // --- Métodos de Leitura (Read) ---
+
+    public Evento buscarPorId(int idEvento) {
+        Evento evento = null;
+        String sql = "SELECT e.id_evento, e.nome, e.tipo, e.data, e.hora, e.descricao, " +
+                "l.id_local, l.nome AS local_nome, l.endereco AS local_endereco, l.capacidade AS local_capacidade " +
+                "FROM evento e JOIN local l ON e.id_local = l.id_local " +
+                "WHERE e.id_evento = ?";
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setInt(1, idEvento);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    evento = criarEventoDoResultSet(rs);
+                }
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            System.out.println("Ocorreu um erro ao listar eventos: " + ex.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar evento por ID no DAO: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return evento;
+    }
+
+    public List<Evento> listarEventosDisponiveis() {
+        List<Evento> eventos = new ArrayList<>();
+        String sql = "SELECT e.id_evento, e.nome, e.tipo, e.data, e.hora, e.descricao, " +
+                "l.id_local, l.nome AS local_nome, l.endereco AS local_endereco, l.capacidade AS local_capacidade " +
+                "FROM evento e JOIN local l ON e.id_local = l.id_local " +
+                "WHERE e.data >= CURRENT_DATE ORDER BY e.data ASC, e.hora ASC";
+
+        try (PreparedStatement stmt = conexao.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                eventos.add(criarEventoDoResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar eventos disponíveis no DAO: " + e.getMessage());
+            e.printStackTrace();
         }
         return eventos;
     }
 
+    // LISTAR TODOS OS EVENTOS
+    public List<Evento> listarTodos() {
+        List<Evento> eventos = new ArrayList<>();
+        String sql = "SELECT e.id_evento, e.nome, e.tipo, e.data, e.hora, e.descricao, " +
+                "l.id_local, l.nome AS local_nome, l.endereco AS local_endereco, l.capacidade AS local_capacidade " +
+                "FROM evento e JOIN local l ON e.id_local = l.id_local " +
+                "ORDER BY e.data DESC, e.hora DESC";
+
+        try (PreparedStatement stmt = conexao.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                eventos.add(criarEventoDoResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar todos os eventos no DAO: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return eventos;
+    }
+
+    // --- Método de Criação (Create) ---
+
     public boolean inserir(Evento evento) {
         boolean sucesso = false;
-        String SQL = "INSERT INTO evento(nome, tipo, data, hora, descricao, id_local) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = conexao.getConn().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)) {
+        String sql = "INSERT INTO evento (nome, tipo, data, hora, descricao, id_local) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, evento.getNome());
             ps.setString(2, evento.getTipo());
             ps.setDate(3, Date.valueOf(evento.getData()));
             ps.setTime(4, Time.valueOf(evento.getHora()));
             ps.setString(5, evento.getDescricao());
-            ps.setInt(6, evento.getId_Local().getId_local());
+            ps.setInt(6, evento.getLocal().getId_local()); // Agora usando getLocal()
 
-            System.out.println("EventoDao: Executando INSERT SQL: " + SQL);
             int linhasAfetadas = ps.executeUpdate();
             if (linhasAfetadas > 0) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -77,116 +125,60 @@ public class EventoDao {
                     }
                 }
                 sucesso = true;
-                System.out.println("EventoDao: Evento inserido com sucesso!");
+                System.out.println("Evento inserido no banco de dados!");
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            System.out.println("EventoDao: Ocorreu um erro SQL ao inserir evento: " + ex.getMessage());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.out.println("EventoDao: Ocorreu um erro inesperado ao inserir evento: " + ex.getMessage());
+            System.out.println("Ocorreu um erro ao inserir evento no DAO: " + ex.getMessage());
         }
         return sucesso;
     }
 
-    public boolean excluir(Evento evento) {
-        boolean sucesso = false;
-        String SQL = "DELETE FROM evento WHERE id_evento = ?";
-        try (PreparedStatement ps = conexao.getConn().prepareStatement(SQL)) {
-            ps.setInt(1, evento.getId_evento());
-            int linhasAfetadas = ps.executeUpdate();
-            sucesso = linhasAfetadas > 0;
-            if (sucesso) {
-                System.out.println("Evento excluído com sucesso!");
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            System.out.println("Ocorreu um erro ao excluir evento.");
-        }
-        return sucesso;
-    }
+    // --- Método de Edição (Update) ---
 
+    // EDITAR EVENTO
     public boolean editar(Evento evento) {
         boolean sucesso = false;
-        String SQL = "UPDATE evento SET nome = ?, tipo = ?, data = ?, hora = ?, descricao = ?, id_local = ? " +
+        String sql = "UPDATE evento SET nome = ?, tipo = ?, data = ?, hora = ?, descricao = ?, id_local = ? " +
                 "WHERE id_evento = ?";
-        try (PreparedStatement ps = conexao.getConn().prepareStatement(SQL)) {
+        try (PreparedStatement ps = conexao.prepareStatement(sql)) {
             ps.setString(1, evento.getNome());
             ps.setString(2, evento.getTipo());
             ps.setDate(3, Date.valueOf(evento.getData()));
             ps.setTime(4, Time.valueOf(evento.getHora()));
             ps.setString(5, evento.getDescricao());
-            ps.setInt(6, evento.getId_Local().getId_local());
+            ps.setInt(6, evento.getLocal().getId_local()); // Agora usando getLocal()
             ps.setInt(7, evento.getId_evento());
 
             int linhasAfetadas = ps.executeUpdate();
             sucesso = linhasAfetadas > 0;
             if (sucesso) {
-                System.out.println("Evento editado com sucesso!");
+                System.out.println("Evento editado no banco de dados!");
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            System.out.println("Ocorreu um erro ao editar evento.");
+            System.out.println("Ocorreu um erro ao editar evento no DAO: " + ex.getMessage());
         }
         return sucesso;
     }
 
-    public Evento buscarPorId(int id) {
-        Evento evento = null;
-        String SQL = "SELECT e.*, l.nome AS local_nome, l.endereco AS local_endereco, l.capacidade AS local_capacidade " +
-                "FROM evento e " +
-                "JOIN local l ON e.id_local = l.id_local " +
-                "WHERE e.id_evento = ?";
-        try (PreparedStatement ps = conexao.getConn().prepareStatement(SQL)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Local local = new Local(
-                            rs.getInt("id_local"),
-                            rs.getString("local_nome"),
-                            rs.getString("local_endereco"),
-                            rs.getInt("local_capacidade")
-                    );
-                    evento = new Evento(
-                            rs.getInt("id_evento"),
-                            rs.getString("nome"),
-                            rs.getString("tipo"),
-                            rs.getDate("data").toLocalDate(),
-                            rs.getTime("hora").toLocalTime(),
-                            rs.getString("descricao"),
-                            local
-                    );
-                    evento.setResponsavelLista(listarResponsaveisPorEventoId(evento.getId_evento()));
-                }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            System.out.println("Erro ao buscar evento por ID: " + ex.getMessage());
-        }
-        return evento;
-    }
+    // --- Método de Exclusão (Delete) ---
 
-    private List<Responsavel> listarResponsaveisPorEventoId(int idEvento) {
-        List<Responsavel> responsaveis = new ArrayList<>();
-        String SQL = "SELECT r.* FROM responsavel r " +
-                "JOIN evento_responsavel er ON r.id_responsavel = er.id_responsavel " +
-                "WHERE er.id_evento = ?";
-        try (PreparedStatement ps = conexao.getConn().prepareStatement(SQL)) {
+    // EXCLUIR EVENTO
+    public boolean excluir(int idEvento) {
+        boolean sucesso = false;
+        String sql = "DELETE FROM evento WHERE id_evento = ?";
+        try (PreparedStatement ps = conexao.prepareStatement(sql)) {
             ps.setInt(1, idEvento);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Responsavel r = new Responsavel();
-                    r.setId_responsavel(rs.getInt("id_responsavel"));
-                    r.setNome(rs.getString("nome"));
-                    r.setEmail(rs.getString("email"));
-                    // Adicione outros campos conforme necessário
-                    responsaveis.add(r);
-                }
+            int linhasAfetadas = ps.executeUpdate();
+            sucesso = linhasAfetadas > 0;
+            if (sucesso) {
+                System.out.println("Evento excluído do banco de dados!");
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            System.out.println("Erro ao buscar responsáveis do evento ID " + idEvento + ": " + ex.getMessage());
+            System.out.println("Ocorreu um erro ao excluir evento no DAO: " + ex.getMessage());
         }
-        return responsaveis;
+        return sucesso;
     }
 }

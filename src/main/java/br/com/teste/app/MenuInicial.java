@@ -14,8 +14,11 @@ public class MenuInicial {
         boolean sairDoSistema = false;
         while (!sairDoSistema) {
             try {
-                System.out.println("\n--- Menu Principal ---");
-                System.out.println("O que você quer fazer: (1) Cadastrar-se ou (2) Login de Participante ou (3) Login de Responsável ou (0) Sair? ");
+                System.out.println("\nMenu Principal");
+                System.out.println("O que você quer fazer:");
+                System.out.println("1) Cadastrar-se");
+                System.out.println("2) Fazer Login");
+                System.out.println("0) Sair?");
                 System.out.print("Sua opção: ");
 
                 int opcaoPrincipal = scanner.nextInt();
@@ -26,10 +29,8 @@ public class MenuInicial {
                         exibirMenuCadastro();
                         break;
                     case 2:
-                        handleLoginParticipante();
-                        break;
-                    case 3:
-                        handleLoginResponsavel();
+                        // Chama o novo MenuLogin para que ele lide com a escolha Participante/Responsável
+                        new MenuLogin().exibirOpcoesLogin();
                         break;
                     case 0:
                         System.out.println("Saindo do Sistema. Até logo!");
@@ -49,7 +50,7 @@ public class MenuInicial {
         }
 
         scanner.close();
-      //  Conexao.getInstance().closeConnection();
+          Conexao.getInstance().closeConnection();
     }
 
     private static void exibirMenuCadastro() {
@@ -68,11 +69,11 @@ public class MenuInicial {
                 switch (tipoCadastro) {
                     case 1:
                         CadastroParticipante.executarCadastroParticipante();
-                        voltarAoMenuPrincipal = true;
+                        voltarAoMenuPrincipal = true; // Volta ao menu principal após cadastro
                         break;
                     case 2:
                         CadastroResponsavel.executarCadastroResponsavel();
-                        voltarAoMenuPrincipal = true;
+                        voltarAoMenuPrincipal = true; // Volta ao menu principal após cadastro
                         break;
                     case 0:
                         System.out.println("Voltando ao Menu Principal...");
@@ -89,16 +90,6 @@ public class MenuInicial {
                 e.printStackTrace();
             }
         }
-    }
-
-    private static void handleLoginParticipante() {
-        LoginParticipante loginParticipante = new LoginParticipante();
-        loginParticipante.iniciarLogin();
-    }
-
-    private static void handleLoginResponsavel() {
-        LoginResponsavel loginResponsavel = new LoginResponsavel();
-        loginResponsavel.iniciarLogin();
     }
 
     public static Scanner getScanner() {

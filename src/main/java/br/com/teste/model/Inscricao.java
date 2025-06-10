@@ -7,12 +7,14 @@ public class Inscricao {
     private Evento evento;
     private Participante participante;
     private LocalDate dataInscricao;
+    private boolean ativa; // Campo para indicar se a inscrição está ativa
 
-    public Inscricao(int id_inscricao, Evento evento, Participante participante, LocalDate dataInscricao) {
+    public Inscricao(int id_inscricao, Evento evento, Participante participante, LocalDate dataInscricao, boolean ativa) {
         this.id_inscricao = id_inscricao;
         this.evento = evento;
         this.participante = participante;
         this.dataInscricao = dataInscricao;
+        this.ativa = ativa;
     }
 
     public int getId_inscricao() {
@@ -41,5 +43,12 @@ public class Inscricao {
     }
     public void setDataInscricao(LocalDate dataInscricao) {
         this.dataInscricao = dataInscricao;
+    }
+
+    public boolean isAtiva() { // Getter para 'ativa'
+        return ativa;
+    }
+    public void setAtiva(boolean ativa) { // Setter para 'ativa'
+        this.ativa = ativa;
     }
 }
