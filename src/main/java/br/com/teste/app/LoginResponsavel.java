@@ -1,9 +1,8 @@
+//mesma logica do loginParticipante
 package br.com.teste.app;
 
 import br.com.teste.model.Responsavel;
 import br.com.teste.service.ResponsavelService;
-
-import java.util.InputMismatchException; // Pode ser removido se não houver nextInt() direto aqui
 import java.util.Scanner;
 
 public class LoginResponsavel {
@@ -31,9 +30,9 @@ public class LoginResponsavel {
                 loginBemSucedido = true; // Sai do loop após login bem-sucedido
             } else {
                 System.out.println("Credenciais de Responsável inválidas. Por favor, tente novamente.");
-                System.out.print("Deseja tentar novamente? (S/N): ");
+                System.out.print("Deseja tentar novamente? (sim/não): ");
                 String tentarNovamente = scanner.nextLine();
-                if (!tentarNovamente.equalsIgnoreCase("S")) {
+                if (!tentarNovamente.equalsIgnoreCase("S")&& !tentarNovamente.equalsIgnoreCase("SIM")) {
                     loginBemSucedido = true; // Sai do loop se o usuário não quiser tentar novamente
                 }
             }

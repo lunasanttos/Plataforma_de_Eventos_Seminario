@@ -1,5 +1,5 @@
 package br.com.teste.app;
-
+// importamos todas as classes que iremos precisar para fazer a logica do menu
 import br.com.teste.model.Participante;
 import br.com.teste.model.Inscricao;
 import br.com.teste.model.Evento;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MenuParticipante {
-
+ // criamos variaveis privadas para serem utilizadas somente aqui nessa classe e nao nos objetos
     private Scanner scanner;
     private ParticipanteService participanteService;
     private Participante participanteLogado;
@@ -25,22 +25,22 @@ public class MenuParticipante {
     public MenuParticipante(Scanner scanner, Participante participanteLogado) {
         this.scanner = scanner;
         this.participanteLogado = participanteLogado;
-        this.participanteService = new ParticipanteService();
-        this.gerarCertificadoService = new GerarCertificado();
-        this.inscricaoService = new InscricaoService();
-        this.eventoService = new EventoService();
+        this.participanteService = new ParticipanteService(); // criamos uma intancia para fazer com que o service possa usar
+        this.gerarCertificadoService = new GerarCertificado(); // o mesmo acontece aqui
+        this.inscricaoService = new InscricaoService(); // o mesmo aqui
+        this.eventoService = new EventoService(); // o mesmo aqui
     }
 
     public void exibirMenuParticipante() {
-        boolean deslogarOuSair = false;
+        boolean deslogarOuSair = false; // inicializamos a variavel bolena com valor falso para controlar o loop
         while (!deslogarOuSair) {
-            if (participanteLogado == null) {
+            if (participanteLogado == null) { // se o participante for igual ao valor vazio ele desloga
                 System.out.println("\nVocê foi deslogado ou houve um erro. Voltando ao menu de login.");
-                deslogarOuSair = true;
+                deslogarOuSair = true; // recebe verdadeiro e sai da aplicação
                 continue;
             }
-
-            System.out.println("\n--- Olá, " + participanteLogado.getNome() + "! Escolha uma ação: ---");
+            //.getNome captura o nome do participante
+            System.out.println("\nOlá, " + participanteLogado.getNome() + "! Escolha uma ação:");
             System.out.println("1. Editar Meu Perfil");
             System.out.println("2. Excluir Minha Conta");
             System.out.println("3. Emitir Certificado");
@@ -54,17 +54,17 @@ public class MenuParticipante {
 
                 switch (opcao) {
                     case 1:
-                        editarMeuPerfil();
+                        editarMeuPerfil(); // chama o metodo editar menu
                         break;
                     case 2:
                         excluirMinhaConta();
-                        if (participanteLogado == null) {
+                        if (participanteLogado == null) { // se participante for igual a nulo
                             System.out.println("Sua conta foi excluída. Você foi deslogado.");
                             deslogarOuSair = true;
                         }
                         break;
                     case 3:
-                        emitirCertificado();
+                        emitirCertificado(); // chama o metodo emitir certificado 
                         break;
                     case 4:
                         gerenciarMinhasInscricoesEmEventos();
