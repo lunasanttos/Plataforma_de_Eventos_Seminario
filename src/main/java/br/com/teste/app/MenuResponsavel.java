@@ -43,14 +43,15 @@ public class MenuResponsavel {
             System.out.println("\n--- Olá, Responsável " + responsavelLogado.getNome() + "! Escolha uma ação: ---");
             System.out.println("1. Visualizar Eventos");
             System.out.println("2. Criar Novo Evento");
-            System.out.println("3. Editar Evento"); // Implementaremos esta
-            System.out.println("4. Excluir Evento"); // Implementaremos esta
+            System.out.println("3. Editar Evento");
+            System.out.println("4. Excluir Evento");
+            System.out.println("5. Cadastrar Novo Local"); // Nova opção adicionada
             System.out.println("0. Deslogar");
             System.out.print("Sua opção: ");
 
             try {
                 int opcao = scanner.nextInt();
-                scanner.nextLine();
+                scanner.nextLine(); // Consome a quebra de linha
 
                 switch (opcao) {
                     case 1:
@@ -60,10 +61,13 @@ public class MenuResponsavel {
                         criarNovoEvento();
                         break;
                     case 3:
-                        editarEvento(); // Chama o novo método
+                        editarEvento();
                         break;
                     case 4:
-                        excluirEvento(); // Chama o novo método
+                        excluirEvento();
+                        break;
+                    case 5: // Chama o novo método para cadastrar local
+                        cadastrarLocal();
                         break;
                     case 0:
                         System.out.println("Deslogando do sistema de Responsável...");
@@ -75,7 +79,7 @@ public class MenuResponsavel {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Entrada inválida. Por favor, digite um número.");
-                scanner.nextLine();
+                scanner.nextLine(); // Limpa o buffer do scanner para evitar loop infinito
             } catch (Exception e) {
                 System.out.println("Ocorreu um erro: " + e.getMessage());
                 e.printStackTrace();
@@ -197,7 +201,6 @@ public class MenuResponsavel {
         }
     }
 
-    // NOVA FUNCIONALIDADE: Editar Evento
     private void editarEvento() {
         System.out.println("\n--- Editar Evento ---");
         List<Evento> eventos = eventoService.listarTodosEventos(); // Lista todos para que o responsável escolha qual editar
@@ -326,7 +329,6 @@ public class MenuResponsavel {
         }
     }
 
-    // NOVA FUNCIONALIDADE: Excluir Evento
     private void excluirEvento() {
         System.out.println("\n--- Excluir Evento ---");
         List<Evento> eventos = eventoService.listarTodosEventos(); // Lista todos para que o responsável escolha qual excluir
@@ -374,6 +376,53 @@ public class MenuResponsavel {
             }
         } else {
             System.out.println("Exclusão de evento cancelada.");
+        }
+    }
+
+    /**
+     * Novo método para cadastrar um novo local.
+     * Solicita ao usuário as informações do local e chama o serviço para inserção.
+     */
+    private void cadastrarLocal() {
+        System.out.println("\n--- Cadastrar Novo Local ---");
+
+        System.out.print("Nome do Local: ");
+        String nomeLocal = scanner.nextLine();
+
+        System.out.print("Endereço do Local: ");
+        String enderecoLocal = scanner.nextLine();
+
+        int capacidadeLocal = -1;
+        boolean capacidadeValida = false;
+        while (!capacidadeValida) {
+            System.out.print("Capacidade do Local (somente números): ");
+            try {
+                capacidadeLocal = scanner.nextInt();
+                scanner.nextLine(); // Consome a quebra de linha
+                if (capacidadeLocal > 0) {
+                    capacidadeValida = true;
+                } else {
+                    System.out.println("A capacidade deve ser um número positivo.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida. Por favor, digite um número para a capacidade.");
+                scanner.nextLine(); // Limpa o buffer do scanner
+            }
+        }
+
+        Local novoLocal = new Local(
+                0, // ID será gerado pelo banco
+                nomeLocal,
+                enderecoLocal,
+                capacidadeLocal
+        );
+
+        boolean sucesso = localService.inserir(novoLocal);
+
+        if (sucesso) {
+            System.out.println("Local '" + novoLocal.getNome() + "' cadastrado com sucesso!");
+        } else {
+            System.out.println("Falha ao cadastrar local. Verifique os dados.");
         }
     }
 }
