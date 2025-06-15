@@ -27,7 +27,7 @@ public class CertificadoServiceTest {
         assertNotNull(certificado, "Certificado deve ser encontrado.");
         assertEquals(id_evento, certificado.getInscricao().getEvento().getId_evento());
         assertEquals(id_participante, certificado.getInscricao().getParticipante().getId_participante());
-
+        System.out.println("Nome do participante: " + certificado.getInscricao().getParticipante().getNome());
         System.out.println("Id Certificado: "+ certificado.getId_certificado() + ", Data de emissão: " + certificado.getData_emissao()+", Código de verificação: " + certificado.getCodigo_verificacao());
     }
 

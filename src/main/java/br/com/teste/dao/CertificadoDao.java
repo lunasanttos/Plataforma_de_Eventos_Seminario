@@ -27,46 +27,61 @@ public class CertificadoDao {
     // metodo para fazer funciionar o retorno do certificado de um determinado participante em um determinado evento no teste.
     public Certificado buscarCertificado(int idEvento, int idParticipante) {
         String sql = """
-            SELECT c.id_certificado, c.data_emissao, c.codigo_verificacao, i.id_inscricao
-            FROM certificado c
-            JOIN inscricao i ON c.id_inscricao = i.id_inscricao
-            WHERE i.id_evento = ? AND i.id_participante = ?
-        """;
+     SELECT c.id_certificado, c.data_emissao, c.codigo_verificacao, i.id_inscricao,
+            p.nome AS nome_participante
+     FROM certificado c
+     JOIN inscricao i ON c.id_inscricao = i.id_inscricao
+     JOIN participante p ON i.id_participante = p.id_participante
+     WHERE i.id_evento = ? AND i.id_participante = ?
+    """;
 
-        try (
-                Connection conn = conexao.getConn();
-                PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = this.conexao.getConn();
+            stmt = conn.prepareStatement(sql);
             stmt.setInt(1, idEvento);
             stmt.setInt(2, idParticipante);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    int idCertificado = rs.getInt("id_certificado");
-                    LocalDate dataEmissao = rs.getDate("data_emissao") != null
-                            ? rs.getDate("data_emissao").toLocalDate() : null;
-                    String codigoVerificacao = rs.getString("codigo_verificacao");
-                    int idInscricao = rs.getInt("id_inscricao");
+            rs = stmt.executeQuery();
 
-                    Evento evento = new Evento();
-                    evento.setId_evento(idEvento);
+            if (rs.next()) {
+                int idCertificado = rs.getInt("id_certificado");
 
-                    Participante participante = new Participante();
-                    participante.setId_participante(idParticipante);
+                Date dataSql = rs.getDate("data_emissao");
+                LocalDate dataEmissao = (dataSql != null) ? dataSql.toLocalDate() : null;
 
-                    Inscricao inscricao = new Inscricao(idInscricao, evento, participante, null, false);
+                String codigoVerificacao = rs.getString("codigo_verificacao");
+                int idInscricao = rs.getInt("id_inscricao");
+                String nomeParticipante = rs.getString("nome_participante");
 
-                    return new Certificado(idCertificado, inscricao, dataEmissao, codigoVerificacao);
-                }
+                Evento evento = new Evento();
+                evento.setId_evento(idEvento);
+
+                Participante participante = new Participante();
+                participante.setId_participante(idParticipante);
+                participante.setNome(nomeParticipante); // <-- Aqui define o nome
+
+                Inscricao inscricao = new Inscricao(idInscricao, evento, participante, null, false);
+                inscricao.setId_inscricao(idInscricao);
+                inscricao.setEvento(evento);
+                inscricao.setParticipante(participante);
+
+                return new Certificado(idCertificado, inscricao, dataEmissao, codigoVerificacao);
             }
 
         } catch (SQLException e) {
-            System.out.println("Erro ao buscar certificado: " + e.getMessage());
+            System.out.println("Erro ao buscar certificado.");
             e.printStackTrace();
+        } finally {
+            try { if (rs != null) rs.close(); } catch (SQLException ignored) {}
+            try { if (stmt != null) stmt.close(); } catch (SQLException ignored) {}
         }
-
         return null;
     }
+
 
     public List<Certificado> listar() {
         List<Certificado> certificados = new ArrayList<>();
