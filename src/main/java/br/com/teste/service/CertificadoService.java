@@ -12,6 +12,11 @@ public class CertificadoService {
         certificadoDao = new CertificadoDao();
     }
 
+    // metodo para retornar a certificado de um determinado participante em um determinado evento.
+    public Certificado buscarCertificadoPorEventoEParticipante(int idEvento, int idParticipante) {
+        return certificadoDao.buscarCertificado(idEvento, idParticipante);
+    }
+
     public List<Certificado> listar(){ // Alterado de ResultSet para List<Certificado>
         return  certificadoDao.listar();
     }

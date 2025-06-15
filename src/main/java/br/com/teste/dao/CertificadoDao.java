@@ -1,14 +1,18 @@
 package br.com.teste.dao;
 
 import br.com.teste.model.Certificado;
+import br.com.teste.model.Evento;
 import br.com.teste.model.Inscricao;
 import br.com.teste.config.Conexao;
+import br.com.teste.model.Participante;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
-import java.sql.Statement;
+import java.time.LocalDate;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +22,50 @@ public class CertificadoDao {
 
     public CertificadoDao() {
         this.conexao = Conexao.getInstance();
+    }
+
+    // metodo para fazer funciionar o retorno do certificado de um determinado participante em um determinado evento no teste.
+    public Certificado buscarCertificado(int idEvento, int idParticipante) {
+        String sql = """
+            SELECT c.id_certificado, c.data_emissao, c.codigo_verificacao, i.id_inscricao
+            FROM certificado c
+            JOIN inscricao i ON c.id_inscricao = i.id_inscricao
+            WHERE i.id_evento = ? AND i.id_participante = ?
+        """;
+
+        try (
+                Connection conn = conexao.getConn();
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            stmt.setInt(1, idEvento);
+            stmt.setInt(2, idParticipante);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int idCertificado = rs.getInt("id_certificado");
+                    LocalDate dataEmissao = rs.getDate("data_emissao") != null
+                            ? rs.getDate("data_emissao").toLocalDate() : null;
+                    String codigoVerificacao = rs.getString("codigo_verificacao");
+                    int idInscricao = rs.getInt("id_inscricao");
+
+                    Evento evento = new Evento();
+                    evento.setId_evento(idEvento);
+
+                    Participante participante = new Participante();
+                    participante.setId_participante(idParticipante);
+
+                    Inscricao inscricao = new Inscricao(idInscricao, evento, participante, null, false);
+
+                    return new Certificado(idCertificado, inscricao, dataEmissao, codigoVerificacao);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar certificado: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public List<Certificado> listar() {

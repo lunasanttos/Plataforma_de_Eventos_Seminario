@@ -27,6 +27,10 @@ public class Evento {
         this.local = local;
     }
 
+    //construtor vazio para retornar certificado em test (certificado dao)
+    public Evento() {
+    }
+
     public int getId_evento() {
         return id_evento;
     }
