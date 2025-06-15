@@ -263,4 +263,23 @@ public class InscricaoDao {
         }
         return inscricoes;
     }
+
+    // metodo para conseguir verificar o evento com mais publico
+    public int contarInscricoesPorEvento(int idEvento) {
+        int total = 0;
+        String SQL = "SELECT COUNT(*) AS total FROM inscricao WHERE id_evento = ?";
+        try (PreparedStatement ps = conexao.getConn().prepareStatement(SQL)) {
+            ps.setInt(1, idEvento);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    total = rs.getInt("total");
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.out.println("Erro ao contar inscrições por evento no DAO: " + ex.getMessage());
+        }
+        return total;
+    }
+
 }
