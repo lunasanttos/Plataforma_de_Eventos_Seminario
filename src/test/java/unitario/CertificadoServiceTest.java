@@ -19,8 +19,8 @@ public class CertificadoServiceTest {
 
     @Test
     public void testBuscarCertificadoValido() {
-        int id_evento = 1;
-        int id_participante = 3;
+        int id_evento = 3;
+        int id_participante = 6;
 
         Certificado certificado = certificadoService.buscarCertificadoPorEventoEParticipante(id_evento, id_participante);
 

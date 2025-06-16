@@ -14,16 +14,36 @@ public class Local {
     }
 
     public int getId_local() {
-        return id_local; }
-    public String getNome() {
-        return nome; }
-    public String getEndereco() { return endereco; }
-    public int getCapacidade() { return capacidade; }
+        return id_local;
+    }
 
-    public void setId_local(int id_local) { this.id_local = id_local; }
-    public void setNome(String nome) { this.nome = nome; }
-    public void setEndereco(String endereco) { this.endereco = endereco; }
-    public void setCapacidade(int capacidade) { this.capacidade = capacidade; }
+    public void setId_local(int id_local) {
+        this.id_local = id_local;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+
+    public int getCapacidade() {
+        return capacidade;
+    }
+
+
+    public void setCapacidade(int capacidade) {
+        this.capacidade = capacidade;
+    }
 
     @Override
     public String toString() {

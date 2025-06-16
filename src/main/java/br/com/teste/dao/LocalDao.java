@@ -3,7 +3,7 @@ package br.com.teste.dao;
 import br.com.teste.config.Conexao;
 import br.com.teste.model.Local;
 
-import java.sql.Connection; // Importar java.sql.Connection
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,20 +13,18 @@ import java.util.List;
 
 public class LocalDao {
 
-    // Altere o tipo de Conexao para Connection, se for usá-la diretamente
-    // Ou mantenha Conexao e sempre chame .getConn()
-    // A opção mais segura é manter 'Conexao conexao;' e chamar 'conexao.getConn()'
-    private Conexao conexao; // Mantém a referência ao objeto Conexao
+
+    private Conexao conexao;
 
     public LocalDao() {
-        // CORREÇÃO: Pega a conexão SQL real do objeto Conexao
-        this.conexao = Conexao.getInstance(); // Pega a instância do singleton
+
+        this.conexao = Conexao.getInstance();
     }
 
     public List<Local> listar() {
         List<Local> locais = new ArrayList<>();
         String SQL = "SELECT * FROM local";
-        try (PreparedStatement ps = conexao.getConn().prepareStatement(SQL); // Usa conexao.getConn()
+        try (PreparedStatement ps = conexao.getConn().prepareStatement(SQL); // Usa a conexao.getConn()
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Local local = new Local(
