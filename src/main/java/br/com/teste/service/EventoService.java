@@ -1,6 +1,7 @@
 package br.com.teste.service;
 
 import br.com.teste.dao.EventoDao;
+import br.com.teste.dao.InscricaoDao;
 import br.com.teste.model.Evento;
 import br.com.teste.model.Local;
 import br.com.teste.model.Responsavel; // Importe a classe Responsavel
@@ -16,6 +17,37 @@ public class EventoService {
         this.eventoDao = new EventoDao();
         this.responsavelService = new ResponsavelService(); // Inicialize o ResponsavelService
     }
+
+    //metodo de teste para obter o local de um evento
+
+    public Local getLocalDoEvento(int id_evento) {
+        Evento evento = buscarPorId(id_evento);
+        if (evento != null) {
+            return evento.getLocal();
+        }
+        return null;
+    }
+
+    //metodo de teste para obter o evento com maior numero de inscritos
+
+    public Evento getEventoComMaiorPublico(){
+        List<Evento> eventos = eventoDao.listarTodos();
+        Evento eventoMaiorPublico = null;
+        int maxParticipantes = -1;
+
+        InscricaoDao inscricaoDao = new InscricaoDao();
+
+        for (Evento evento : eventos) {
+            int inscritos = inscricaoDao.contarInscricoesPorEvento(evento.getId_evento());
+            if (inscritos > maxParticipantes) {
+                maxParticipantes = inscritos;
+                eventoMaiorPublico = evento;
+            }
+        }
+
+        return eventoMaiorPublico;
+    }
+
 
     // Read: Busca um evento por ID e carrega seus responsáveis
     public Evento buscarPorId(int idEvento) {

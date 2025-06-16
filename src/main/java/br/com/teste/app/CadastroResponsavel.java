@@ -6,7 +6,9 @@ import br.com.teste.service.ResponsavelService;
 
 import java.util.Scanner;
 
-public class CadastroResponsavel {
+public class
+
+CadastroResponsavel {
 
     private static Scanner scanner = MenuInicial.getScanner();
 

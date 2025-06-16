@@ -5,7 +5,7 @@ import br.com.teste.service.ParticipanteService; // service do participante: emp
 // nao precisamos importar classes de login e menu pois fazem parte da mesma pasta.
 public class CadastroParticipante { // nossa classe principal, o main é o ponto de partida do nosso projeto
 
-        private static Scanner scanner = MenuInicial.getScanner(); // criamos uma stancia do scanner para podermos utiliza-lo
+         private static Scanner scanner = MenuInicial.getScanner(); // criamos uma stancia do scanner para podermos utiliza-lo
 // no caso estamos instanciando a classe scanner no metodo do menuinicial.
     public static void executarCadastroParticipante() {
         ParticipanteService service = new ParticipanteService(); // criamos uma instancia do participante servece para podermos chamar os metodos dessa classe e realizar a operação de inserir / cadastrar parcipante
