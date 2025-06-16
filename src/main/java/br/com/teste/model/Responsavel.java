@@ -11,10 +11,12 @@ public class Responsavel {
         this.nome = nome;
         this.email = email;
     }
+
+    public Responsavel() {
+    }
+
     public int getId_responsavel() {
         return id_responsavel;
-    }
-    public Responsavel() {
     }
 
     public void setId_responsavel(int id_responsavel) {

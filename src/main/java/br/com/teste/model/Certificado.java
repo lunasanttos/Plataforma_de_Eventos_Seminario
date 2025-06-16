@@ -44,7 +44,6 @@ public class Certificado {
     }
 
     public void setCodigo_verificacao(String codigo_verificacao) {
-
         this.codigo_verificacao = codigo_verificacao;
     }
 
@@ -53,7 +52,6 @@ public class Certificado {
     }
 
     public void setIdCertificado(int idCertificado) {
-
         this.id_certificado = idCertificado;
     }
 }

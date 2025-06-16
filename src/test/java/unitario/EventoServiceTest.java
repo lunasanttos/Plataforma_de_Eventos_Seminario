@@ -18,7 +18,7 @@ public class EventoServiceTest {
 
     @Test
     public void testBuscarLocalDoEventoValido() {
-        Local local = eventoService.getLocalDoEvento(1);
+        Local local = eventoService.getLocalDoEvento(2);
         assertNotNull(local.getNome());
         assertNotNull(local.getEndereco());
         assertNotNull(local.getCapacidade());
