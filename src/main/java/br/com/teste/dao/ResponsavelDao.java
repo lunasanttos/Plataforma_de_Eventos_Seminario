@@ -146,9 +146,10 @@ public class ResponsavelDao {
         return responsavel;
     }
 
+    // NOVO MÉTODO IMPLEMENTADO: Listar responsáveis associados a um evento específico
     public List<Responsavel> listarResponsaveisPorEventoId(int idEvento) {
         List<Responsavel> responsaveis = new ArrayList<>();
-
+        // Query que faz JOIN com a tabela de associação evento_responsavel
         String SQL = "SELECT r.id_responsavel, r.nome, r.email " +
                 "FROM responsavel r " +
                 "JOIN evento_responsavel er ON r.id_responsavel = er.id_responsavel " +

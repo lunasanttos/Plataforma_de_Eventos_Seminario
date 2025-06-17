@@ -3,7 +3,7 @@ package br.com.teste.service;
 import br.com.teste.model.Participante;
 import br.com.teste.dao.ParticipanteDao;
 
-import java.util.List;
+import java.util.List; // Adicionado: Import para List
 
 public class ParticipanteService {
 

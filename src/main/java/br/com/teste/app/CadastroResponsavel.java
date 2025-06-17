@@ -1,3 +1,4 @@
+// esse codigo contem a mesma logica do cadastro participante. a unica diferença é que ele nao tem o main, ou seja nao é o ponto de partida principal do nosso projeto;
 package br.com.teste.app;
 
 import br.com.teste.model.Responsavel;

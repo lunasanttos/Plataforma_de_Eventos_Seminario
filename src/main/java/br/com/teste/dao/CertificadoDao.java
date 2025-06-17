@@ -24,6 +24,7 @@ public class CertificadoDao {
         this.conexao = Conexao.getInstance();
     }
 
+    // metodo para fazer funciionar o retorno do certificado de um determinado participante em um determinado evento no teste.
     public Certificado buscarCertificado(int idEvento, int idParticipante) {
         String sql = """
      SELECT c.id_certificado, c.data_emissao, c.codigo_verificacao, i.id_inscricao,
