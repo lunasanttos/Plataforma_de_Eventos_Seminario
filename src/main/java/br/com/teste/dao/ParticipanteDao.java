@@ -13,6 +13,7 @@ import java.util.List;
 public class ParticipanteDao {
 
     private Conexao conexao;
+    // private PreparedStatement ps; // REMOVER: ps deve ser declarado localmente com try-with-resources
 
     public ParticipanteDao() {
         this.conexao = Conexao.getInstance();
@@ -41,6 +42,7 @@ public class ParticipanteDao {
         return participante;
     }
 
+    // Alterado para retornar List<Participante> e usar try-with-resources
     public List<Participante> listar() {
         List<Participante> participantes = new ArrayList<>();
         String SQL = "SELECT * FROM participante ORDER BY nome";
@@ -61,6 +63,7 @@ public class ParticipanteDao {
         return participantes;
     }
 
+    // Já retorna boolean e usa try-with-resources corretamente
     public boolean inserir(Participante participante) {
         boolean sucesso = false;
         try (PreparedStatement ps = conexao.getConn().prepareStatement(
@@ -87,6 +90,7 @@ public class ParticipanteDao {
         return sucesso;
     }
 
+    // Já retorna boolean e usa try-with-resources corretamente
     public boolean excluir(Participante participante) {
         boolean sucesso = false;
         try (PreparedStatement ps = conexao.getConn().prepareStatement("DELETE FROM participante WHERE id_participante = ?")) {
@@ -103,6 +107,7 @@ public class ParticipanteDao {
         return sucesso;
     }
 
+    // Já retorna boolean e usa try-with-resources corretamente
     public boolean editar(Participante participante) {
         boolean sucesso = false;
         try (PreparedStatement ps = conexao.getConn().prepareStatement("UPDATE participante SET nome = ?, cpf = ?, email = ? WHERE id_participante = ?")) {
@@ -122,6 +127,7 @@ public class ParticipanteDao {
         return sucesso;
     }
 
+    // Adicionado método para buscar por ID para consistência
     public Participante buscarPorId(int id) {
         Participante participante = null;
         String SQL = "SELECT * FROM participante WHERE id_participante = ?";

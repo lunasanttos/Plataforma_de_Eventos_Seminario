@@ -3,7 +3,7 @@ package br.com.teste.dao;
 import br.com.teste.config.Conexao;
 import br.com.teste.model.Responsavel;
 
-import java.sql.Connection;
+import java.sql.Connection; // Importar java.sql.Connection para o tipo da variável 'conexao'
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,11 +13,14 @@ import java.util.List;
 
 public class ResponsavelDao {
 
-
-    private Connection conexao;
+    // CORREÇÃO: Altere o tipo da variável 'conexao' para java.sql.Connection
+    // Ou, se você quer manter a referência ao objeto Conexao singleton,
+    // então a inicialização no construtor deve ser 'Conexao.getInstance().getConn();'.
+    // A segunda opção é mais comum para DAOs que dependem de um singleton de conexão.
+    private Connection conexao; // O DAO trabalha diretamente com Connection
 
     public ResponsavelDao() {
-
+        // CORREÇÃO AQUI: Garante que você está pegando o objeto Connection do singleton
         this.conexao = Conexao.getInstance().getConn();
     }
 
