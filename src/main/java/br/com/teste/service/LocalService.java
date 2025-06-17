@@ -55,12 +55,11 @@ public class LocalService {
         return true;
     }
 
-    // MÉTODO QUE FALTAVA/ESTAVA INCOMPLETO
     public Local buscarPorId(int idLocal) {
         if (idLocal <= 0) {
             System.out.println("Erro no LocalService: ID de local inválido para busca.");
             return null;
         }
-        return localDao.buscarPorId(idLocal); // Delega a busca ao DAO
+        return localDao.buscarPorId(idLocal);
     }
 }

@@ -58,18 +58,15 @@ public class InscricaoService {
         return true;
     }
 
-    // NOVO MÉTODO: Para listar todas as inscrições de um participante específico
     public List<Inscricao> listarInscricoesPorParticipante(int idParticipante) {
-        // Validação simples: garante que o ID do participante é válido
+
         if (idParticipante <= 0) {
             System.out.println("Erro no Service: ID de participante inválido para listar inscrições.");
-            return new java.util.ArrayList<>(); // Retorna uma lista vazia, não null
+            return new java.util.ArrayList<>();
         }
-        // Delega a busca ao DAO
         return inscricaoDao.listarPorParticipante(idParticipante);
     }
 
-    // O método buscarInscricaoPorId que foi sugerido para o GerarCertificado
     public Inscricao buscarInscricaoPorId(int idInscricao) {
         if (idInscricao <= 0) {
             System.out.println("Erro no Service: ID de inscrição inválido para busca.");

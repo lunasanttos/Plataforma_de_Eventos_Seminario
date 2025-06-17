@@ -7,7 +7,7 @@ public class Inscricao {
     private Evento evento;
     private Participante participante;
     private LocalDate dataInscricao;
-    private boolean ativa; // Campo para indicar se a inscrição está ativa
+    private boolean ativa;
 
     public Inscricao(int id_inscricao, Evento evento, Participante participante, LocalDate dataInscricao, boolean ativa) {
         this.id_inscricao = id_inscricao;

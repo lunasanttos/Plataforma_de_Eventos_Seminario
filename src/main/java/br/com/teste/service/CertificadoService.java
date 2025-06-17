@@ -2,7 +2,7 @@ package br.com.teste.service;
 import br.com.teste.model.Certificado;
 import br.com.teste.dao.CertificadoDao;
 
-import java.util.List; // Adicionado: Import para List
+import java.util.List;
 
 public class CertificadoService {
 
@@ -12,7 +12,6 @@ public class CertificadoService {
         certificadoDao = new CertificadoDao();
     }
 
-    // metodo para retornar a certificado de um determinado participante em um determinado evento no teste.
     public Certificado buscarCertificadoPorEventoEParticipante(int idEvento, int idParticipante) {
         return certificadoDao.buscarCertificado(idEvento, idParticipante);
     }
@@ -29,7 +28,7 @@ public class CertificadoService {
     }
 
     public boolean excluir(Certificado certificado){
-        if (certificado.getId_Certificado() == 0) // Cuidado com a capitalização aqui, como já mencionei.
+        if (certificado.getId_Certificado() == 0)
             return false;
 
         return certificadoDao.excluir(certificado);

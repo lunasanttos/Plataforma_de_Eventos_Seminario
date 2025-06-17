@@ -43,7 +43,6 @@ public class EventoDao {
         );
     }
 
-    // --- Métodos de Leitura (Read) ---
 
     public Evento buscarPorId(int idEvento) {
         Evento evento = null;
@@ -84,7 +83,6 @@ public class EventoDao {
         return eventos;
     }
 
-    // LISTAR TODOS OS EVENTOS
     public List<Evento> listarTodos() {
         List<Evento> eventos = new ArrayList<>();
         String sql = "SELECT e.id_evento, e.nome, e.tipo, e.data, e.hora, e.descricao, " +
@@ -104,7 +102,6 @@ public class EventoDao {
         return eventos;
     }
 
-    // --- Método de Criação (Create) ---
 
     public boolean inserir(Evento evento) {
         boolean sucesso = false;
@@ -134,9 +131,7 @@ public class EventoDao {
         return sucesso;
     }
 
-    // --- Método de Edição (Update) ---
 
-    // EDITAR EVENTO
     public boolean editar(Evento evento) {
         boolean sucesso = false;
         String sql = "UPDATE evento SET nome = ?, tipo = ?, data = ?, hora = ?, descricao = ?, id_local = ? " +
@@ -162,9 +157,7 @@ public class EventoDao {
         return sucesso;
     }
 
-    // --- Método de Exclusão (Delete) ---
 
-    // EXCLUIR EVENTO
     public boolean excluir(int idEvento) {
         boolean sucesso = false;
         String sql = "DELETE FROM evento WHERE id_evento = ?";

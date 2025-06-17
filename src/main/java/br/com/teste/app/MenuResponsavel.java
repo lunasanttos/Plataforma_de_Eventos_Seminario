@@ -45,13 +45,13 @@ public class MenuResponsavel {
             System.out.println("2. Criar Novo Evento");
             System.out.println("3. Editar Evento");
             System.out.println("4. Excluir Evento");
-            System.out.println("5. Cadastrar Novo Local"); // Nova opção adicionada
+            System.out.println("5. Cadastrar Novo Local");
             System.out.println("0. Deslogar");
             System.out.print("Sua opção: ");
 
             try {
                 int opcao = scanner.nextInt();
-                scanner.nextLine(); // Consome a quebra de linha
+                scanner.nextLine();
 
                 switch (opcao) {
                     case 1:
@@ -66,7 +66,7 @@ public class MenuResponsavel {
                     case 4:
                         excluirEvento();
                         break;
-                    case 5: // Chama o novo método para cadastrar local
+                    case 5:
                         cadastrarLocal();
                         break;
                     case 0:
@@ -79,7 +79,7 @@ public class MenuResponsavel {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Entrada inválida. Por favor, digite um número.");
-                scanner.nextLine(); // Limpa o buffer do scanner para evitar loop infinito
+                scanner.nextLine();
             } catch (Exception e) {
                 System.out.println("Ocorreu um erro: " + e.getMessage());
                 e.printStackTrace();
@@ -89,8 +89,7 @@ public class MenuResponsavel {
 
     private void visualizarEventos() {
         System.out.println("\n--- Visualizar Eventos ---");
-        List<Evento> eventos = eventoService.listarTodosEventos(); // Lista todos para edição/exclusão
-
+        List<Evento> eventos = eventoService.listarTodosEventos();
         if (eventos.isEmpty()) {
             System.out.println("Nenhum evento encontrado no sistema.");
         } else {
@@ -183,7 +182,7 @@ public class MenuResponsavel {
         }
 
         Evento novoEvento = new Evento(
-                0, // ID será gerado pelo banco
+                0,
                 nomeEvento,
                 tipoEvento,
                 dataEvento,
@@ -203,14 +202,14 @@ public class MenuResponsavel {
 
     private void editarEvento() {
         System.out.println("\n--- Editar Evento ---");
-        List<Evento> eventos = eventoService.listarTodosEventos(); // Lista todos para que o responsável escolha qual editar
+        List<Evento> eventos = eventoService.listarTodosEventos();
 
         if (eventos.isEmpty()) {
             System.out.println("Nenhum evento para editar.");
             return;
         }
 
-        visualizarEventos(); // Reutiliza o método para listar eventos para facilitar a escolha
+        visualizarEventos();
 
         System.out.print("Informe o ID do evento que deseja editar (0 para cancelar): ");
         int idEventoEditar = -1;
@@ -256,7 +255,7 @@ public class MenuResponsavel {
             System.out.print("Data atual (" + eventoParaEditar.getData() + ") (AAAA-MM-DD): ");
             String novaDataStr = scanner.nextLine();
             if (novaDataStr.isEmpty()) {
-                novaData = eventoParaEditar.getData(); // Mantém o atual se vazio
+                novaData = eventoParaEditar.getData();
                 dataValida = true;
             } else {
                 try {
@@ -276,7 +275,7 @@ public class MenuResponsavel {
             System.out.print("Hora atual (" + eventoParaEditar.getHora() + ") (HH:MM): ");
             String novaHoraStr = scanner.nextLine();
             if (novaHoraStr.isEmpty()) {
-                novaHora = eventoParaEditar.getHora(); // Mantém o atual se vazio
+                novaHora = eventoParaEditar.getHora();
                 horaValida = true;
             } else {
                 try {
@@ -295,7 +294,7 @@ public class MenuResponsavel {
             eventoParaEditar.setDescricao(novaDescricao);
         }
 
-        // Editar Local:
+
         System.out.println("\n--- Escolha o NOVO Local do Evento (ID atual: " + eventoParaEditar.getLocal().getId_local() + " - " + eventoParaEditar.getLocal().getNome() + ") ---");
         System.out.print("Informe o ID do NOVO Local (0 para manter o atual): ");
         int idNovoLocal = -1;
@@ -331,14 +330,14 @@ public class MenuResponsavel {
 
     private void excluirEvento() {
         System.out.println("\n--- Excluir Evento ---");
-        List<Evento> eventos = eventoService.listarTodosEventos(); // Lista todos para que o responsável escolha qual excluir
+        List<Evento> eventos = eventoService.listarTodosEventos();
 
         if (eventos.isEmpty()) {
             System.out.println("Nenhum evento para excluir.");
             return;
         }
 
-        visualizarEventos(); // Reutiliza o método para listar eventos para facilitar a escolha
+        visualizarEventos();
 
         System.out.print("Informe o ID do evento que deseja excluir (0 para cancelar): ");
         int idEventoExcluir = -1;
@@ -379,10 +378,7 @@ public class MenuResponsavel {
         }
     }
 
-    /**
-     * Novo método para cadastrar um novo local.
-     * Solicita ao usuário as informações do local e chama o serviço para inserção.
-     */
+
     private void cadastrarLocal() {
         System.out.println("\n--- Cadastrar Novo Local ---");
 
@@ -398,7 +394,7 @@ public class MenuResponsavel {
             System.out.print("Capacidade do Local (somente números): ");
             try {
                 capacidadeLocal = scanner.nextInt();
-                scanner.nextLine(); // Consome a quebra de linha
+                scanner.nextLine();
                 if (capacidadeLocal > 0) {
                     capacidadeValida = true;
                 } else {
@@ -406,12 +402,12 @@ public class MenuResponsavel {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Entrada inválida. Por favor, digite um número para a capacidade.");
-                scanner.nextLine(); // Limpa o buffer do scanner
+                scanner.nextLine();
             }
         }
 
         Local novoLocal = new Local(
-                0, // ID será gerado pelo banco
+                0,
                 nomeLocal,
                 enderecoLocal,
                 capacidadeLocal

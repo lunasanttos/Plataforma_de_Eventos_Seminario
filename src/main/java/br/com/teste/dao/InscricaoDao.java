@@ -23,9 +23,8 @@ public class InscricaoDao {
         this.conexao = Conexao.getInstance();
     }
 
-    // Método auxiliar para criar um objeto Evento a partir de um ResultSet
     private Evento criarEventoDoResultSet(ResultSet rs) throws SQLException {
-        // As colunas para o Local devem vir do JOIN com a tabela 'local'
+
         Local localDoEvento = new Local(
                 rs.getInt("id_local_evento"),
                 rs.getString("local_nome_evento"),
@@ -33,7 +32,7 @@ public class InscricaoDao {
                 rs.getInt("local_capacidade_evento")
         );
 
-        // As colunas para o Evento devem vir da tabela 'evento'
+
         return new Evento(
                 rs.getInt("id_evento_inscricao"),
                 rs.getString("nome_evento_inscricao"),
@@ -45,7 +44,6 @@ public class InscricaoDao {
         );
     }
 
-    // Método auxiliar para criar um objeto Participante a partir de um ResultSet
     private Participante criarParticipanteDoResultSet(ResultSet rs) throws SQLException {
         return new Participante(
                 rs.getInt("id_participante_inscricao"),
@@ -57,7 +55,7 @@ public class InscricaoDao {
 
     public List<Inscricao> listar(){
         List<Inscricao> inscricoes = new ArrayList<>();
-        // Query COMPLETA com JOINs e ALIASES para todas as colunas necessárias
+
         String SQL = "SELECT i.id_inscricao, i.data_inscricao, i.ativa, " +
                 "e.id_evento AS id_evento_inscricao, e.nome AS nome_evento_inscricao, e.tipo AS tipo_evento_inscricao, " +
                 "e.data AS data_evento_inscricao, e.hora AS hora_evento_inscricao, e.descricao AS descricao_evento_inscricao, " +
@@ -189,10 +187,9 @@ public class InscricaoDao {
         return inscricao;
     }
 
-    // Método para listar inscrições por ID do Participante (utilizado no MenuParticipante)
     public List<Inscricao> listarPorParticipante(int idParticipante) {
         List<Inscricao> inscricoes = new ArrayList<>();
-        // Query COMPLETA com JOINs e ALIASES para todas as colunas necessárias
+
         String SQL = "SELECT i.id_inscricao, i.data_inscricao, i.ativa, " +
                 "e.id_evento AS id_evento_inscricao, e.nome AS nome_evento_inscricao, e.tipo AS tipo_evento_inscricao, " +
                 "e.data AS data_evento_inscricao, e.hora AS hora_evento_inscricao, e.descricao AS descricao_evento_inscricao, " +
@@ -226,9 +223,6 @@ public class InscricaoDao {
         return inscricoes;
     }
 
-    // Este método é novo (ou foi ajustado) para a funcionalidade de exclusão de evento
-    // ou para a verificação de dependência de exclusão de evento.
-    // Ele lista inscrições por ID de evento.
     public List<Inscricao> listarPorEvento(int idEvento) {
         List<Inscricao> inscricoes = new ArrayList<>();
         String SQL = "SELECT i.id_inscricao, i.data_inscricao, i.ativa, " +
@@ -264,7 +258,6 @@ public class InscricaoDao {
         return inscricoes;
     }
 
-    // metodo para conseguir verificar o evento com mais publico
     public int contarInscricoesPorEvento(int idEvento) {
         int total = 0;
         String SQL = "SELECT COUNT(*) AS total FROM inscricao WHERE id_evento = ?";
